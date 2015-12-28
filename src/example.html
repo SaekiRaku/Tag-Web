@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>HTML5 Canvas Tag Web</title>
+		<script type="text/javascript" src="tagweb.js" ></script>
+	</head>
+	<body>
+		<div id="duang" style="width: 400px; height: 300px; background: #00ACC1;">
+			
+		</div>
+		
+		<a href="javascript:addTag('test')">addTag</a>
+		
+		<script>
+			var obj = new TagWeb("duang");
+			obj.setLineRange(500);
+			obj.addCallBack(function(str){alert(str+" was clicked");})
+			
+			function addTag(str){
+				var name = new Array("HTML5","Java","iOS","PHP","UED",".NET","Node.js")
+				for(var i=0;i<name.length;i++){
+					obj.addTag(name[i],32 * Math.random() + 12);
+				}
+			}
+		</script>
+		
+	</body>
+</html>
