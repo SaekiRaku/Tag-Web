@@ -30,7 +30,7 @@ function TagWeb(divID, data, strokeStyle) {
 	this.setLineStyle = function(strokeStyle) {
 		if (strokeStyle == undefined || typeof strokeStyle != "string" || typeof strokeStyle != "object") {
 			throw new Error("wrong type of strokeStyle");
-			return false;
+			return;
 		}
 		lineStyle = strokeStyle;
 	}
@@ -38,7 +38,7 @@ function TagWeb(divID, data, strokeStyle) {
 	this.setTextStyle = function(strokeStyle) {
 		if (strokeStyle == undefined || typeof strokeStyle != "string" || typeof strokeStyle != "object") {
 			throw new Error("wrong type of strokeStyle");
-			return false;
+			return;
 		}
 		fontStyle = strokeStyle;
 	}
@@ -46,7 +46,7 @@ function TagWeb(divID, data, strokeStyle) {
 	this.setTextFont = function(fontName) {
 		if (fontName == undefined || typeof fontName != "string") {
 			throw new Error("wrong type of fontName");
-			return false;
+			return;
 		}
 		font = fontName;
 	}
@@ -55,24 +55,26 @@ function TagWeb(divID, data, strokeStyle) {
 		lineRange = range;
 	}
 
-	this.addTag = function(str, fontSize) {
+	this.addTag = function(str, fontSize, x, y) {
 		if (str == undefined || typeof str != "string") {
 			throw new Error("wrong type of str");
-			return false;
+			return;
 		} else if (fontSize == undefined) {
 			fontSize = 48 * Math.random() + 12;
 		}
 		if (typeof fontSize != "number") {
 			throw new Error("wrong type of fontSize");
-			return false;
+			return;
 		}
 
-		var stageWidth = canvas.offsetWidth - ctx.measureText(str).width;
-		var stageHeight = canvas.offsetHeight - fontSize;
+		var stageWidth = canvas.offsetWidth * 0.8;
+		var stageHeight = canvas.offsetHeight * 0.8;
+		
+		ctx.font = obj.fontSize + "px " + font;
 
 		data.push({
-			x: Math.random() * stageWidth + ctx.measureText(str).width,
-			y: Math.random() * stageHeight + fontSize,
+			x: stageWidth * 0.1 + Math.random() * (stageWidth-ctx.measureText(str).width) + ctx.measureText(str).width,
+			y: stageHeight * 0.1 + Math.random() * (stageHeight-fontSize) + fontSize,
 			xmove: Math.random() * 20,
 			xrandom: Math.random() * 0.5,
 			ymove: Math.random() * 20,
@@ -80,6 +82,26 @@ function TagWeb(divID, data, strokeStyle) {
 			tag: str,
 			fontSize: fontSize
 		});
+	}
+	
+	this.gridHypodispersion = function(row,col){
+		var now=0;
+		var stageWidth = canvas.offsetWidth * 0.8;
+		var stageHeight = canvas.offsetHeight * 0.8;
+		var gridWidth = stageWidth/col;
+		var gridHeight = stageHeight/row;
+
+		for(var m=0;m<row;m++){
+			for(var n=0;n<col;n++){
+				if(now>=data.length){
+					break;
+				}else{
+					data[now].x = stageWidth*0.1 + gridWidth*m + (gridWidth * Math.random());
+					data[now].y = stageHeight*0.1 + gridHeight*n + (gridHeight * Math.random());
+					now++;
+				}
+			}
+		}
 	}
 	
 	this.addCallBack = function(func){
@@ -102,6 +124,8 @@ function TagWeb(divID, data, strokeStyle) {
 			for (var i = 0; i < data.length; i++) {
 				
 				var obj = data[i];
+				
+				ctx.font = obj.fontSize + "px " + font;
 				
 				var a = (evt.offsetX > obj.x + obj.xmove - ctx.measureText(obj.tag).width/2);
 				var b = (evt.offsetX < obj.x + obj.xmove + ctx.measureText(obj.tag).width/2);
